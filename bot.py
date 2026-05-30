@@ -13,28 +13,42 @@ from aiogram.types import (
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
+from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
 TOKEN = os.getenv("BOT_TOKEN")
 
-bot = Bot(token=TOKEN)
+bot = Bot(
+    token=TOKEN,
+    default=DefaultBotProperties(
+        parse_mode=ParseMode.HTML
+    )
+)
+
 dp = Dispatcher()
 
 ADMIN_ID = 8415319221
 
+
+# ================= STATES =================
 
 class OrderState(StatesGroup):
     waiting_for_description = State()
     waiting_for_photo = State()
 
 
+# ================= START =================
+
 @dp.message(CommandStart())
 async def start(message: Message):
 
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
+
             [
                 InlineKeyboardButton(
                     text="🎨 Аватарки",
@@ -45,16 +59,18 @@ async def start(message: Message):
                     callback_data="banner"
                 )
             ],
+
             [
                 InlineKeyboardButton(
                     text="✨ Логотипы",
                     callback_data="logo"
                 ),
                 InlineKeyboardButton(
-                    text="🔥 Аниме аватарки",
+                    text="🔥 Анимированные",
                     callback_data="anime"
                 )
             ],
+
             [
                 InlineKeyboardButton(
                     text="🎬 Эдиты",
@@ -65,16 +81,18 @@ async def start(message: Message):
                     callback_data="montage"
                 )
             ],
+
             [
                 InlineKeyboardButton(
-                    text="😎 Премиум эмодзи",
+                    text="😎 Эмодзи",
                     callback_data="emoji"
                 ),
                 InlineKeyboardButton(
-                    text="🌐 Создание сайта",
+                    text="🌐 Сайты",
                     callback_data="site"
                 )
             ],
+
             [
                 InlineKeyboardButton(
                     text="💎 CryptoBot",
@@ -85,63 +103,70 @@ async def start(message: Message):
                     callback_data="faceit"
                 )
             ],
+
             [
-                InlineKeyboardButton(
-                    text="📦 Мои заказы",
-                    callback_data="orders"
-                ),
                 InlineKeyboardButton(
                     text="🖼 Портфолио",
                     callback_data="portfolio"
-                )
-            ],
-            [
+                ),
                 InlineKeyboardButton(
                     text="⭐ Отзывы",
                     callback_data="reviews"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    text="❓ FAQ",
+                    callback_data="faq"
+                ),
+                InlineKeyboardButton(
+                    text="📦 Мои заказы",
+                    callback_data="orders"
                 )
             ]
         ]
     )
 
     await message.answer(
-        "🔥 Добро пожаловать в Design Shop Bot!\n\n"
+        "🔥 <b>Добро пожаловать в DesignPulse!</b>\n\n"
 
-        "🖼️ АВАТАРКИ\n"
-        "▫️ Статичная аватарка — 300 ₽\n"
-        "▫️ Premium аватарка — 500 ₽\n"
-        "▫️ Анимированная аватарка — 1000 ₽\n\n"
+        "🖼️ <b>АВАТАРКИ</b>\n"
+        "▫️ Статичная — 300 ₽\n"
+        "▫️ Premium — 500 ₽\n"
+        "▫️ Анимированная — 1000 ₽\n\n"
 
-        "🎯 ЛОГОТИПЫ\n"
-        "▫️ Минималистичный логотип — 700 ₽\n"
-        "▫️ Игровой логотип — 1200 ₽\n"
-        "▫️ Премиум логотип с эффектами — 2000 ₽\n\n"
+        "🎯 <b>ЛОГОТИПЫ</b>\n"
+        "▫️ Минималистичный — 700 ₽\n"
+        "▫️ Игровой — 1200 ₽\n"
+        "▫️ Премиум — 2000 ₽\n\n"
 
-        "🌌 БАННЕРЫ\n"
-        "▫️ Discord / Telegram баннер — 700 ₽\n"
-        "▫️ YouTube баннер — 1000 ₽\n"
-        "▫️ Игровой баннер — 1500 ₽\n\n"
+        "🌌 <b>БАННЕРЫ</b>\n"
+        "▫️ Discord / Telegram — 700 ₽\n"
+        "▫️ YouTube — 1000 ₽\n"
+        "▫️ Игровой — 1500 ₽\n\n"
 
-        "🎬 ВИДЕО / ЭДИТЫ\n"
-        "▫️ Обычный эдит — 220 ₽\n"
-        "▫️ Монтаж видео — 1201 ₽\n\n"
+        "🎬 <b>ВИДЕО</b>\n"
+        "▫️ Эдит — 220 ₽\n"
+        "▫️ Монтаж — 1201 ₽\n\n"
 
-        "😎 PREMIUM ЭМОДЗИ\n"
-        "▫️ Пак из 10 эмодзи — 120 ₽\n\n"
+        "😎 <b>PREMIUM ЭМОДЗИ</b>\n"
+        "▫️ Пак из 10 — 120 ₽\n\n"
 
-        "💎 СЕРВИСЫ\n"
+        "💎 <b>СЕРВИСЫ</b>\n"
         "▫️ Faceit — 639 ₽\n"
         "▫️ CryptoBot — 703 ₽\n\n"
 
-        "🌐 WEB-ДИЗАЙН\n"
+        "🌐 <b>WEB-ДИЗАЙН</b>\n"
         "▫️ Лендинг — 3000 ₽\n"
-        "▫️ Дизайн сайта — 5000 ₽\n"
-        "▫️ Полный UI/UX проект — по договоренности\n\n"
+        "▫️ Дизайн сайта — 5000 ₽\n\n"
 
         "👇 Выберите услугу:",
         reply_markup=keyboard
     )
 
+
+# ================= SERVICE BUTTONS =================
 
 @dp.callback_query(F.data.in_([
     "avatar",
@@ -157,20 +182,20 @@ async def start(message: Message):
 ]))
 async def service_order(callback: CallbackQuery, state: FSMContext):
 
-    service_names = {
-        "avatar": "🎨 Аватарки",
-        "banner": "🖼 Баннеры",
-        "logo": "✨ Логотипы",
-        "anime": "🔥 Аниме аватарки",
-        "edits": "🎬 Эдиты",
+    services = {
+        "avatar": "🎨 Аватарка",
+        "banner": "🖼 Баннер",
+        "logo": "✨ Логотип",
+        "anime": "🔥 Анимированная аватарка",
+        "edits": "🎬 Эдит",
         "montage": "🎞 Монтаж",
-        "emoji": "😎 Премиум эмодзи",
-        "site": "🌐 Создание сайта",
+        "emoji": "😎 Эмодзи",
+        "site": "🌐 Сайт",
         "crypto": "💎 CryptoBot",
         "faceit": "🎮 Faceit"
     }
 
-    service = service_names[callback.data]
+    service = services[callback.data]
 
     await state.update_data(service=service)
 
@@ -184,6 +209,8 @@ async def service_order(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
 
 
+# ================= DESCRIPTION =================
+
 @dp.message(OrderState.waiting_for_description)
 async def get_description(message: Message, state: FSMContext):
 
@@ -196,20 +223,29 @@ async def get_description(message: Message, state: FSMContext):
     )
 
 
+# ================= PHOTO =================
+
 @dp.message(OrderState.waiting_for_photo, F.photo)
 async def get_photo(message: Message, state: FSMContext):
 
     data = await state.get_data()
 
-    description = data["description"]
     service = data["service"]
+    description = data["description"]
+
+    username = message.from_user.username
+
+    if username:
+        username = f"@{username}"
+    else:
+        username = "нет username"
 
     text = (
-        f"🔥 Новый заказ!\n\n"
-        f"🛒 Услуга: {service}\n"
-        f"🆔 ID клиента: {message.from_user.id}\n"
-        f"👤 Username: @{message.from_user.username}\n\n"
-        f"📝 ТЗ:\n{description}"
+        f"🔥 <b>Новый заказ!</b>\n\n"
+        f"🛒 <b>Услуга:</b> {service}\n"
+        f"👤 <b>Username:</b> {username}\n"
+        f"🆔 <b>ID:</b> {message.from_user.id}\n\n"
+        f"📝 <b>ТЗ:</b>\n{description}"
     )
 
     await bot.send_message(ADMIN_ID, text)
@@ -223,55 +259,169 @@ async def get_photo(message: Message, state: FSMContext):
 
     await message.answer(
         "✅ Заказ отправлен!\n"
-        "Скоро дизайнер начнет работу."
+        "Ожидайте ответа дизайнера."
     )
 
     await state.clear()
 
 
+# ================= WRONG PHOTO =================
+
+@dp.message(OrderState.waiting_for_photo)
+async def no_photo(message: Message):
+
+    await message.answer(
+        "❌ Отправьте именно фото."
+    )
+
+
+# ================= PORTFOLIO =================
+
 @dp.callback_query(F.data == "portfolio")
 async def portfolio(callback: CallbackQuery):
 
     await callback.message.answer(
-        "🖼 Наше портфолио:\n\n"
+        "🖼 <b>Портфолио:</b>\n\n"
         "🎨 Аватарки\n"
         "🖼 Баннеры\n"
         "✨ Логотипы\n"
         "🔥 Анимированные аватарки\n"
         "🎬 Эдиты\n"
-        "🎞 Монтаж видео\n"
-        "😎 Премиум эмодзи\n"
+        "🎞 Монтаж\n"
+        "😎 Premium эмодзи\n"
         "🌐 Создание сайтов"
     )
 
     await callback.answer()
 
 
+# ================= REVIEWS =================
+
 @dp.callback_query(F.data == "reviews")
 async def reviews(callback: CallbackQuery):
 
     await callback.message.answer(
-        "⭐ Отзывы клиентов:\n\n"
+        "⭐ <b>Отзывы:</b>\n\n"
         "💬 Очень быстро и качественно!\n"
-        "💬 Сделали топовую аватарку 🔥\n"
-        "💬 Лучший дизайнер!"
+        "💬 Лучшая аватарка 🔥\n"
+        "💬 Все сделали за пару часов!"
     )
 
     await callback.answer()
 
+
+# ================= FAQ =================
+
+@dp.callback_query(F.data == "faq")
+async def faq(callback: CallbackQuery):
+
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="💳 Оплата",
+                    callback_data="pay_help"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="⏳ Сроки",
+                    callback_data="time_help"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="📦 Как заказать",
+                    callback_data="order_help"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="👨‍💻 Поддержка",
+                    callback_data="support_help"
+                )
+            ]
+        ]
+    )
+
+    await callback.message.answer(
+        "❓ <b>FAQ / Помощь</b>",
+        reply_markup=keyboard
+    )
+
+    await callback.answer()
+
+
+@dp.callback_query(F.data == "pay_help")
+async def pay_help(callback: CallbackQuery):
+
+    await callback.message.answer(
+        "💳 Оплата возможна через CryptoBot."
+    )
+
+    await callback.answer()
+
+
+@dp.callback_query(F.data == "time_help")
+async def time_help(callback: CallbackQuery):
+
+    await callback.message.answer(
+        "⏳ Среднее время выполнения:\n"
+        "от 1 часа до 24 часов."
+    )
+
+    await callback.answer()
+
+
+@dp.callback_query(F.data == "order_help")
+async def order_help(callback: CallbackQuery):
+
+    await callback.message.answer(
+        "📦 Как сделать заказ:\n\n"
+        "1️⃣ Выберите услугу\n"
+        "2️⃣ Отправьте описание\n"
+        "3️⃣ Скиньте референс\n"
+        "4️⃣ Ожидайте выполнение"
+    )
+
+    await callback.answer()
+
+
+@dp.callback_query(F.data == "support_help")
+async def support_help(callback: CallbackQuery):
+
+    await callback.message.answer(
+        "👨‍💻 Поддержка:\n"
+        "@DesignPulse11"
+    )
+
+    await callback.answer()
+
+
+# ================= ORDERS =================
+
 @dp.callback_query(F.data == "orders")
 async def orders(callback: CallbackQuery):
 
+    username = callback.from_user.username
+
+    if username:
+        username = f"@{username}"
+    else:
+        username = "нет username"
+
     await callback.message.answer(
-        f"📦 Ваш профиль\n\n"
+        f"📦 <b>Ваш профиль</b>\n\n"
         f"🆔 ID: {callback.from_user.id}\n"
-        f"👤 Username: @{callback.from_user.username}\n\n"
-        f"⏳ Последний статус:\n"
+        f"👤 Username: {username}\n\n"
+        f"⏳ Статус:\n"
         f"Ожидает обработки"
     )
 
     await callback.answer()
 
+
+# ================= ADMIN STATUS =================
 
 @dp.message(Command("status"))
 async def set_status(message: Message):
@@ -288,7 +438,7 @@ async def set_status(message: Message):
 
         await bot.send_message(
             user_id,
-            f"📦 Статус заказа:\n\n{status}"
+            f"📦 <b>Статус заказа:</b>\n\n{status}"
         )
 
         await message.answer("✅ Статус отправлен!")
@@ -300,6 +450,8 @@ async def set_status(message: Message):
         )
 
 
+# ================= MAIN =================
+
 async def main():
     print("Бот запущен...")
     await dp.start_polling(bot)
@@ -307,20 +459,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-
-
-from flask import Flask
-from threading import Thread
-import os
-
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return "Bot is running!"
-
-def run_web():
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
-
-Thread(target=run_web).start()
