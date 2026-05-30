@@ -354,7 +354,7 @@ async def support_help(callback: CallbackQuery):
 
     await callback.message.answer(
         "👨‍💻 Поддержка:\n"
-        "@DesignPulseSupport"
+        "@Veyntt"
     )
 
     await callback.answer()
