@@ -44,7 +44,20 @@ class OrderState(StatesGroup):
 # ================= START =================
 
 @dp.message(CommandStart())
-async def start(message: Message):
+async def start(message: Message, state: FSMContext):
+
+    data = await state.get_data()
+
+    old_message_id = data.get("menu_message")
+
+    try:
+        if old_message_id:
+            await bot.delete_message(
+                chat_id=message.chat.id,
+                message_id=old_message_id
+            )
+    except:
+        pass
 
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
@@ -66,7 +79,7 @@ async def start(message: Message):
                     callback_data="logo"
                 ),
                 InlineKeyboardButton(
-                    text="🔥 Анимированные",
+                    text="🔥 Аниме аватарки",
                     callback_data="anime"
                 )
             ],
@@ -84,11 +97,11 @@ async def start(message: Message):
 
             [
                 InlineKeyboardButton(
-                    text="😎 Эмодзи",
+                    text="😎 Премиум эмодзи",
                     callback_data="emoji"
                 ),
                 InlineKeyboardButton(
-                    text="🌐 Сайты",
+                    text="🌐 Создание сайта",
                     callback_data="site"
                 )
             ],
@@ -106,29 +119,29 @@ async def start(message: Message):
 
             [
                 InlineKeyboardButton(
-                    text="🖼 Портфолио",
-                    callback_data="portfolio"
+                    text="📦 Мои заказы",
+                    callback_data="orders"
                 ),
                 InlineKeyboardButton(
-                    text="⭐ Отзывы",
-                    callback_data="reviews"
+                    text="🖼 Портфолио",
+                    callback_data="portfolio"
                 )
             ],
 
             [
                 InlineKeyboardButton(
-                    text="❓ FAQ",
-                    callback_data="faq"
+                    text="⭐ Отзывы",
+                    callback_data="reviews"
                 ),
                 InlineKeyboardButton(
-                    text="📦 Мои заказы",
-                    callback_data="orders"
+                    text="❓ FAQ",
+                    callback_data="faq"
                 )
             ]
         ]
     )
 
-    await message.answer(
+    sent_message = await message.answer(
         "🔥 <b>Добро пожаловать в DesignPulse!</b>\n\n"
 
         "🖼️ <b>АВАТАРКИ</b>\n"
@@ -165,6 +178,10 @@ async def start(message: Message):
         reply_markup=keyboard
     )
 
+    await state.update_data(
+        menu_message=sent_message.message_id
+    )
+
 
 # ================= SERVICE BUTTONS =================
 
@@ -186,11 +203,11 @@ async def service_order(callback: CallbackQuery, state: FSMContext):
         "avatar": "🎨 Аватарка",
         "banner": "🖼 Баннер",
         "logo": "✨ Логотип",
-        "anime": "🔥 Анимированная аватарка",
+        "anime": "🔥 Аниме аватарка",
         "edits": "🎬 Эдит",
         "montage": "🎞 Монтаж",
-        "emoji": "😎 Эмодзи",
-        "site": "🌐 Сайт",
+        "emoji": "😎 Премиум эмодзи",
+        "site": "🌐 Создание сайта",
         "crypto": "💎 CryptoBot",
         "faceit": "🎮 Faceit"
     }
@@ -285,7 +302,7 @@ async def portfolio(callback: CallbackQuery):
         "🎨 Аватарки\n"
         "🖼 Баннеры\n"
         "✨ Логотипы\n"
-        "🔥 Анимированные аватарки\n"
+        "🔥 Аниме аватарки\n"
         "🎬 Эдиты\n"
         "🎞 Монтаж\n"
         "😎 Premium эмодзи\n"
