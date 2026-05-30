@@ -53,7 +53,7 @@ async def start(message: Message):
                     callback_data="logo"
                 ),
                 InlineKeyboardButton(
-                    text="🔥 Аниме аватарки",
+                    text="🔥 Anime аватарки",
                     callback_data="anime"
                 )
             ],
@@ -107,27 +107,21 @@ async def start(message: Message):
                     text="⭐ Отзывы",
                     callback_data="reviews"
                 )
-            ],
-
-            [
-                InlineKeyboardButton(
-                    text="❓ FAQ",
-                    callback_data="faq"
-                )
             ]
         ]
     )
 
     await message.answer(
-        "🔥 Добро пожаловать в DesignPulse!\n\n"
+        "🔥 ДОБРО ПОЖАЛОВАТЬ В DESIGNPULSE\n\n"
 
-        "🖼 АВАТАРКИ\n"
+        "━━━━━━━━━━━━━━━\n"
+        "🎨 АВАТАРКИ\n"
         "▫️ Обычная — 300 ₽\n"
         "▫️ Premium — 500 ₽\n"
         "▫️ Анимированная — 1000 ₽\n\n"
 
         "✨ ЛОГОТИПЫ\n"
-        "▫️ Минимализм — 700 ₽\n"
+        "▫️ Minimal — 700 ₽\n"
         "▫️ Gaming — 1200 ₽\n"
         "▫️ Premium — 2000 ₽\n\n"
 
@@ -175,7 +169,7 @@ async def service_order(callback: CallbackQuery, state: FSMContext):
         "avatar": "🎨 Аватарка",
         "banner": "🖼 Баннер",
         "logo": "✨ Логотип",
-        "anime": "🔥 Аниме аватарка",
+        "anime": "🔥 Anime аватарка",
         "edits": "🎬 Эдит",
         "montage": "🎞 Монтаж",
         "emoji": "😎 Эмодзи",
@@ -236,8 +230,8 @@ async def get_photo(message: Message, state: FSMContext):
     )
 
     await message.answer(
-        "✅ Заказ отправлен!\n"
-        "Ожидайте ответа дизайнера."
+        "✅ Заказ отправлен!\n\n"
+        "💬 Ожидайте ответа дизайнера."
     )
 
     await state.clear()
@@ -247,11 +241,11 @@ async def get_photo(message: Message, state: FSMContext):
 async def portfolio(callback: CallbackQuery):
 
     await callback.message.answer(
-        "🖼 Портфолио:\n\n"
+        "🖼 ПОРТФОЛИО\n\n"
         "🎨 Аватарки\n"
         "🖼 Баннеры\n"
         "✨ Логотипы\n"
-        "🔥 Аниме аватарки\n"
+        "🔥 Anime аватарки\n"
         "🎬 Эдиты\n"
         "🎞 Монтаж\n"
         "😎 Premium эмодзи\n"
@@ -265,96 +259,10 @@ async def portfolio(callback: CallbackQuery):
 async def reviews(callback: CallbackQuery):
 
     await callback.message.answer(
-        "⭐ Отзывы:\n\n"
-        "💬 Очень быстро и качественно 🔥\n"
-        "💬 Лучшая аватарка!\n"
+        "⭐ ОТЗЫВЫ\n\n"
+        "💬 Очень быстро и качественно!\n\n"
+        "💬 Лучшая аватарка 🔥\n\n"
         "💬 Сделали за пару часов!"
-    )
-
-    await callback.answer()
-
-
-@dp.callback_query(F.data == "faq")
-async def faq(callback: CallbackQuery):
-
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="💳 Оплата",
-                    callback_data="pay_help"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="⏳ Сроки",
-                    callback_data="time_help"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="📦 Как заказать",
-                    callback_data="order_help"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="👨‍💻 Поддержка",
-                    callback_data="support_help"
-                )
-            ]
-        ]
-    )
-
-    await callback.message.answer(
-        "❓ FAQ / Помощь",
-        reply_markup=keyboard
-    )
-
-    await callback.answer()
-
-
-@dp.callback_query(F.data == "pay_help")
-async def pay_help(callback: CallbackQuery):
-
-    await callback.message.answer(
-        "💳 Оплата происходит через CryptoBot."
-    )
-
-    await callback.answer()
-
-
-@dp.callback_query(F.data == "time_help")
-async def time_help(callback: CallbackQuery):
-
-    await callback.message.answer(
-        "⏳ Среднее время выполнения:\n"
-        "от 1 часа до 24 часов."
-    )
-
-    await callback.answer()
-
-
-@dp.callback_query(F.data == "order_help")
-async def order_help(callback: CallbackQuery):
-
-    await callback.message.answer(
-        "📦 Как сделать заказ:\n\n"
-        "1️⃣ Выберите услугу\n"
-        "2️⃣ Опишите заказ\n"
-        "3️⃣ Отправьте референс\n"
-        "4️⃣ Ожидайте ответ дизайнера"
-    )
-
-    await callback.answer()
-
-
-@dp.callback_query(F.data == "support_help")
-async def support_help(callback: CallbackQuery):
-
-    await callback.message.answer(
-        "👨‍💻 Поддержка:\n"
-        "@Veyntt"
     )
 
     await callback.answer()
@@ -364,14 +272,25 @@ async def support_help(callback: CallbackQuery):
 async def orders(callback: CallbackQuery):
 
     await callback.message.answer(
-        f"📦 Ваш профиль\n\n"
+        f"📦 ВАШ ПРОФИЛЬ\n\n"
         f"🆔 ID: {callback.from_user.id}\n"
         f"👤 Username: @{callback.from_user.username}\n\n"
-        f"⏳ Статус заказов:\n"
-        f"Пока заказов нет."
+        f"⏳ Статус:\n"
+        f"Ожидает обработки\n\n"
+        f"👨‍💻 Поддержка:\n"
+        f"@Veyntt"
     )
 
     await callback.answer()
+
+
+@dp.message(Command("support"))
+async def support(message: Message):
+
+    await message.answer(
+        "👨‍💻 Поддержка:\n"
+        "@Veyntt"
+    )
 
 
 @dp.message(Command("status"))
