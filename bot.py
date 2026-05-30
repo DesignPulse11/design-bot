@@ -259,7 +259,6 @@ async def reviews(callback: CallbackQuery):
 
     await callback.answer()
 
-
 @dp.callback_query(F.data == "orders")
 async def orders(callback: CallbackQuery):
 
@@ -308,3 +307,20 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+
+
+from flask import Flask
+from threading import Thread
+import os
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is running!"
+
+def run_web():
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
+
+Thread(target=run_web).start()
