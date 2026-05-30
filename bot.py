@@ -13,51 +13,25 @@ from aiogram.types import (
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
-from aiogram.enums import ParseMode
-from aiogram.client.default import DefaultBotProperties
-
 from dotenv import load_dotenv
 
 load_dotenv()
 
 TOKEN = os.getenv("BOT_TOKEN")
 
-bot = Bot(
-    token=TOKEN,
-    default=DefaultBotProperties(
-        parse_mode=ParseMode.HTML
-    )
-)
-
+bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
 ADMIN_ID = 8415319221
 
-
-# ================= STATES =================
 
 class OrderState(StatesGroup):
     waiting_for_description = State()
     waiting_for_photo = State()
 
 
-# ================= START =================
-
 @dp.message(CommandStart())
-async def start(message: Message, state: FSMContext):
-
-    data = await state.get_data()
-
-    old_message_id = data.get("menu_message")
-
-    try:
-        if old_message_id:
-            await bot.delete_message(
-                chat_id=message.chat.id,
-                message_id=old_message_id
-            )
-    except:
-        pass
+async def start(message: Message):
 
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
@@ -132,7 +106,10 @@ async def start(message: Message, state: FSMContext):
                 InlineKeyboardButton(
                     text="⭐ Отзывы",
                     callback_data="reviews"
-                ),
+                )
+            ],
+
+            [
                 InlineKeyboardButton(
                     text="❓ FAQ",
                     callback_data="faq"
@@ -141,49 +118,44 @@ async def start(message: Message, state: FSMContext):
         ]
     )
 
-    sent_message = await message.answer(
-        "🔥 <b>Добро пожаловать в DesignPulse!</b>\n\n"
+    await message.answer(
+        "🔥 Добро пожаловать в DesignPulse!\n\n"
 
-        "🖼️ <b>АВАТАРКИ</b>\n"
-        "▫️ Статичная — 300 ₽\n"
+        "🖼 АВАТАРКИ\n"
+        "▫️ Обычная — 300 ₽\n"
         "▫️ Premium — 500 ₽\n"
         "▫️ Анимированная — 1000 ₽\n\n"
 
-        "🎯 <b>ЛОГОТИПЫ</b>\n"
-        "▫️ Минималистичный — 700 ₽\n"
-        "▫️ Игровой — 1200 ₽\n"
-        "▫️ Премиум — 2000 ₽\n\n"
+        "✨ ЛОГОТИПЫ\n"
+        "▫️ Минимализм — 700 ₽\n"
+        "▫️ Gaming — 1200 ₽\n"
+        "▫️ Premium — 2000 ₽\n\n"
 
-        "🌌 <b>БАННЕРЫ</b>\n"
+        "🖼 БАННЕРЫ\n"
         "▫️ Discord / Telegram — 700 ₽\n"
         "▫️ YouTube — 1000 ₽\n"
-        "▫️ Игровой — 1500 ₽\n\n"
+        "▫️ Gaming — 1500 ₽\n\n"
 
-        "🎬 <b>ВИДЕО</b>\n"
-        "▫️ Эдит — 220 ₽\n"
-        "▫️ Монтаж — 1201 ₽\n\n"
+        "🎬 ВИДЕО\n"
+        "▫️ Обычный эдит — 220 ₽\n"
+        "▫️ Монтаж видео — 1201 ₽\n\n"
 
-        "😎 <b>PREMIUM ЭМОДЗИ</b>\n"
-        "▫️ Пак из 10 — 120 ₽\n\n"
+        "😎 PREMIUM ЭМОДЗИ\n"
+        "▫️ Пак из 10 эмодзи — 120 ₽\n\n"
 
-        "💎 <b>СЕРВИСЫ</b>\n"
+        "💎 СЕРВИСЫ\n"
         "▫️ Faceit — 639 ₽\n"
         "▫️ CryptoBot — 703 ₽\n\n"
 
-        "🌐 <b>WEB-ДИЗАЙН</b>\n"
+        "🌐 WEB-ДИЗАЙН\n"
         "▫️ Лендинг — 3000 ₽\n"
-        "▫️ Дизайн сайта — 5000 ₽\n\n"
+        "▫️ Дизайн сайта — 5000 ₽\n"
+        "▫️ Полный UI/UX проект — по договоренности\n\n"
 
         "👇 Выберите услугу:",
         reply_markup=keyboard
     )
 
-    await state.update_data(
-        menu_message=sent_message.message_id
-    )
-
-
-# ================= SERVICE BUTTONS =================
 
 @dp.callback_query(F.data.in_([
     "avatar",
@@ -206,8 +178,8 @@ async def service_order(callback: CallbackQuery, state: FSMContext):
         "anime": "🔥 Аниме аватарка",
         "edits": "🎬 Эдит",
         "montage": "🎞 Монтаж",
-        "emoji": "😎 Премиум эмодзи",
-        "site": "🌐 Создание сайта",
+        "emoji": "😎 Эмодзи",
+        "site": "🌐 Сайт",
         "crypto": "💎 CryptoBot",
         "faceit": "🎮 Faceit"
     }
@@ -226,8 +198,6 @@ async def service_order(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
 
 
-# ================= DESCRIPTION =================
-
 @dp.message(OrderState.waiting_for_description)
 async def get_description(message: Message, state: FSMContext):
 
@@ -240,8 +210,6 @@ async def get_description(message: Message, state: FSMContext):
     )
 
 
-# ================= PHOTO =================
-
 @dp.message(OrderState.waiting_for_photo, F.photo)
 async def get_photo(message: Message, state: FSMContext):
 
@@ -250,19 +218,12 @@ async def get_photo(message: Message, state: FSMContext):
     service = data["service"]
     description = data["description"]
 
-    username = message.from_user.username
-
-    if username:
-        username = f"@{username}"
-    else:
-        username = "нет username"
-
     text = (
-        f"🔥 <b>Новый заказ!</b>\n\n"
-        f"🛒 <b>Услуга:</b> {service}\n"
-        f"👤 <b>Username:</b> {username}\n"
-        f"🆔 <b>ID:</b> {message.from_user.id}\n\n"
-        f"📝 <b>ТЗ:</b>\n{description}"
+        f"🔥 Новый заказ!\n\n"
+        f"🛒 Услуга: {service}\n"
+        f"👤 Username: @{message.from_user.username}\n"
+        f"🆔 ID: {message.from_user.id}\n\n"
+        f"📝 ТЗ:\n{description}"
     )
 
     await bot.send_message(ADMIN_ID, text)
@@ -282,23 +243,11 @@ async def get_photo(message: Message, state: FSMContext):
     await state.clear()
 
 
-# ================= WRONG PHOTO =================
-
-@dp.message(OrderState.waiting_for_photo)
-async def no_photo(message: Message):
-
-    await message.answer(
-        "❌ Отправьте именно фото."
-    )
-
-
-# ================= PORTFOLIO =================
-
 @dp.callback_query(F.data == "portfolio")
 async def portfolio(callback: CallbackQuery):
 
     await callback.message.answer(
-        "🖼 <b>Портфолио:</b>\n\n"
+        "🖼 Портфолио:\n\n"
         "🎨 Аватарки\n"
         "🖼 Баннеры\n"
         "✨ Логотипы\n"
@@ -312,22 +261,18 @@ async def portfolio(callback: CallbackQuery):
     await callback.answer()
 
 
-# ================= REVIEWS =================
-
 @dp.callback_query(F.data == "reviews")
 async def reviews(callback: CallbackQuery):
 
     await callback.message.answer(
-        "⭐ <b>Отзывы:</b>\n\n"
-        "💬 Очень быстро и качественно!\n"
-        "💬 Лучшая аватарка 🔥\n"
-        "💬 Все сделали за пару часов!"
+        "⭐ Отзывы:\n\n"
+        "💬 Очень быстро и качественно 🔥\n"
+        "💬 Лучшая аватарка!\n"
+        "💬 Сделали за пару часов!"
     )
 
     await callback.answer()
 
-
-# ================= FAQ =================
 
 @dp.callback_query(F.data == "faq")
 async def faq(callback: CallbackQuery):
@@ -362,7 +307,7 @@ async def faq(callback: CallbackQuery):
     )
 
     await callback.message.answer(
-        "❓ <b>FAQ / Помощь</b>",
+        "❓ FAQ / Помощь",
         reply_markup=keyboard
     )
 
@@ -373,7 +318,7 @@ async def faq(callback: CallbackQuery):
 async def pay_help(callback: CallbackQuery):
 
     await callback.message.answer(
-        "💳 Оплата возможна через CryptoBot."
+        "💳 Оплата происходит через CryptoBot."
     )
 
     await callback.answer()
@@ -396,9 +341,9 @@ async def order_help(callback: CallbackQuery):
     await callback.message.answer(
         "📦 Как сделать заказ:\n\n"
         "1️⃣ Выберите услугу\n"
-        "2️⃣ Отправьте описание\n"
-        "3️⃣ Скиньте референс\n"
-        "4️⃣ Ожидайте выполнение"
+        "2️⃣ Опишите заказ\n"
+        "3️⃣ Отправьте референс\n"
+        "4️⃣ Ожидайте ответ дизайнера"
     )
 
     await callback.answer()
@@ -409,36 +354,25 @@ async def support_help(callback: CallbackQuery):
 
     await callback.message.answer(
         "👨‍💻 Поддержка:\n"
-        "@Veyntt"
+        "@DesignPulseSupport"
     )
 
     await callback.answer()
 
-
-# ================= ORDERS =================
 
 @dp.callback_query(F.data == "orders")
 async def orders(callback: CallbackQuery):
 
-    username = callback.from_user.username
-
-    if username:
-        username = f"@{username}"
-    else:
-        username = "нет username"
-
     await callback.message.answer(
-        f"📦 <b>Ваш профиль</b>\n\n"
+        f"📦 Ваш профиль\n\n"
         f"🆔 ID: {callback.from_user.id}\n"
-        f"👤 Username: {username}\n\n"
-        f"⏳ Статус:\n"
-        f"Ожидает обработки"
+        f"👤 Username: @{callback.from_user.username}\n\n"
+        f"⏳ Статус заказов:\n"
+        f"Пока заказов нет."
     )
 
     await callback.answer()
 
-
-# ================= ADMIN STATUS =================
 
 @dp.message(Command("status"))
 async def set_status(message: Message):
@@ -455,7 +389,7 @@ async def set_status(message: Message):
 
         await bot.send_message(
             user_id,
-            f"📦 <b>Статус заказа:</b>\n\n{status}"
+            f"📦 Статус заказа:\n\n{status}"
         )
 
         await message.answer("✅ Статус отправлен!")
@@ -466,8 +400,6 @@ async def set_status(message: Message):
             "/status USER_ID статус"
         )
 
-
-# ================= MAIN =================
 
 async def main():
     print("Бот запущен...")
